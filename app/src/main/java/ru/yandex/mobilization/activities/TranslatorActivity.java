@@ -23,6 +23,11 @@ public class TranslatorActivity extends AppCompatActivity {
             public void onSuccess(String result) {
 
             }
+
+            @Override
+            public void onError() {
+
+            }
         };
         new YandexApiService().getLanguages(this, callback);
     }
