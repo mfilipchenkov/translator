@@ -5,12 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-
-import com.android.volley.VolleyError;
 
 import java.util.ArrayList;
 
@@ -28,24 +25,23 @@ public class TranslatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translator);
 
-        translationItems = new ArrayList<>();
+        translationItems = new ArrayList<String>();
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, this.translationItems);
 
-        ListView translationListView = (ListView) this.findViewById(R.id.resultListView);
+        ListView translationListView = (ListView) this.findViewById(R.id.translation_listview);
         translationListView.setAdapter(this.listAdapter);
         uploadLanguages();
     }
 
-    public void onUpdateButtonClick(View view) {
-        Language from = (Language) ((Spinner)this.findViewById(R.id.langSourceBtn)).getSelectedItem();
-        Language to = (Language) ((Spinner)this.findViewById(R.id.langTargetBtn)).getSelectedItem();
+    public void onSwapButtonClick(View view) {
+        Language from = (Language) ((Spinner)this.findViewById(R.id.source_language_spinner)).getSelectedItem();
+        Language to = (Language) ((Spinner)this.findViewById(R.id.target_language_spinner)).getSelectedItem();
 
-        String text = ((EditText)this.findViewById(R.id.inputField)).getText().toString();
+        String text = ((EditText)this.findViewById(R.id.source_text_edittext)).getText().toString();
         IRequestCallback callback = new IRequestCallback() {
             @Override
             public void onSuccess(Object result) {
-                ArrayList<String> resultList = (ArrayList<String>) result;
-                translationItems.addAll(resultList);
+                translationItems.addAll((ArrayList<String>)result);
                 listAdapter.notifyDataSetChanged();
             }
 
@@ -59,8 +55,8 @@ public class TranslatorActivity extends AppCompatActivity {
     }
 
     private void uploadLanguages() {
-        final Spinner srcLanguageSpinner = (Spinner) this.findViewById(R.id.langSourceBtn);
-        final Spinner targetLanguageSpinner = (Spinner) this.findViewById(R.id.langTargetBtn);
+        final Spinner srcLanguageSpinner = (Spinner) this.findViewById(R.id.source_language_spinner);
+        final Spinner targetLanguageSpinner = (Spinner) this.findViewById(R.id.target_language_spinner);
 
         final Context currentContext = this;
 

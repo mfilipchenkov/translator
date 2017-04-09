@@ -12,22 +12,22 @@
         android:orientation="horizontal">
 
         <Spinner
-            android:id="@+id/langSourceBtn"
+            android:id="@+id/source_language_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/langSwitchBtn"
+            android:id="@+id/swap_language_btn"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="onUpdateButtonClick"
-            android:text="@string/ru_refresh" />
+            android:onClick="onSwapButtonClick"
+            android:text="@string/ru_swap" />
 
         <Spinner
-            android:id="@+id/langTargetBtn"
+            android:id="@+id/target_language_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -35,7 +35,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/inputField"
+        android:id="@+id/source_text_edittext"
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
         android:scrollbars="vertical" />
 
     <ListView
-        android:id="@+id/resultListView"
+        android:id="@+id/translation_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

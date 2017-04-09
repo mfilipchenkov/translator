@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Mobilization</string>
-    <string name="ru_choose_language">Выберите язык</string>
-    <string name="ru_refresh">Обновить</string>
+    <string name="app_name">Yandex.Mobilization</string>
+    <string name="ru_swap">Поменять</string>
 </resources>

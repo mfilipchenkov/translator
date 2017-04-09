@@ -7,16 +7,12 @@ import com.android.volley.toolbox.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-
-import org.json.JSONArray;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import ru.yandex.mobilization.R;
 import ru.yandex.mobilization.interfaces.IRequestCallback;
 import ru.yandex.mobilization.models.Language;
 import ru.yandex.mobilization.providers.HttpRequestProvider;
@@ -35,46 +31,50 @@ public class YandexApiService {
     // Метод для получения списков языков.
     // Принимает контекст приложения и метод обратного вызова для обработки результата
     public void getLanguages(final IRequestCallback callback) {
-        HttpRequestProvider provider = HttpRequestProvider.getInstance(this.context.getApplicationContext());
+        try {
+            HttpRequestProvider provider = HttpRequestProvider.getInstance(this.context.getApplicationContext());
 
-        String url = "https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=" + this.apiKey + "&ui=ru";
+            String url = "https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=" + this.apiKey + "&ui=ru";
 
-        StringRequest request = new StringRequest(Request.Method.POST, url,
-            new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    ObjectMapper mapper = new ObjectMapper();
-                    try {
-                        JsonNode root = mapper.readTree(response);
-                        // В ответе ищем элемент langs, если его нет, кидаем исключение
-                        if(!root.has("langs")) {
-                            throw new Exception("Не найден элемент langs");
+            StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        ObjectMapper mapper = new ObjectMapper();
+                        try {
+                            JsonNode root = mapper.readTree(response);
+                            // В ответе ищем элемент langs, если его нет, кидаем исключение
+                            if(!root.has("langs")) {
+                                throw new Exception("Не найден элемент langs");
+                            }
+
+                            JsonNode langs = root.get("langs");
+
+                            LinkedHashMap<String, String> map = mapper.convertValue(langs, new TypeReference<LinkedHashMap<String, String>>(){});
+                            ArrayList<Language> languageList = new ArrayList<>();
+
+                            for(Map.Entry<String, String> entry: map.entrySet()) {
+                                languageList.add(new Language(entry.getKey(), entry.getValue()));
+                            }
+
+                            callback.onSuccess(languageList);
+                        } catch (Exception e) {
+                            callback.onError(e);
                         }
-
-                        JsonNode langs = root.get("langs");
-
-                        LinkedHashMap<String, String> map = mapper.convertValue(langs, new TypeReference<LinkedHashMap<String, String>>(){});
-                        ArrayList<Language> languageList = new ArrayList<>();
-
-                        for(Map.Entry<String, String> entry: map.entrySet()) {
-                            languageList.add(new Language(entry.getKey(), entry.getValue()));
-                        }
-
-                        callback.onSuccess(languageList);
-                    } catch (Exception e) {
-                        callback.onError(e);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
                     }
                 }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    callback.onError(error);
-                }
-            }
-        );
+            );
 
-        provider.addToQueue(request);
+            provider.addToQueue(request);
+        } catch (Exception e) {
+            callback.onError(e);
+        }
     }
 
     public void translate(String from, String to, final String text, final IRequestCallback callback) {
@@ -87,25 +87,25 @@ public class YandexApiService {
                     "&format=plain";
 
             StringRequest request = new StringRequest(Request.Method.POST, url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                ObjectMapper mapper = new ObjectMapper();
-                                JsonNode node = mapper.readTree(response).get("text");
-                                ArrayList<String> list = mapper.readValue(node.toString(), new TypeReference<ArrayList<String>>() {});
-                                callback.onSuccess(list);
-                            } catch(Exception e) {
-
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            callback.onError(error);
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            ObjectMapper mapper = new ObjectMapper();
+                            JsonNode node = mapper.readTree(response).get("text");
+                            ArrayList<String> list = mapper.readValue(node.toString(), new TypeReference<ArrayList<String>>() {});
+                            callback.onSuccess(list);
+                        } catch(Exception e) {
+                            callback.onError(e);
                         }
                     }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
+                    }
+                }
             );
 
             provider.addToQueue(request);
