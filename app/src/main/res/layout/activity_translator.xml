@@ -11,14 +11,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <Spinner
             android:id="@+id/langSourceBtn"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:text="@string/ru_choose_language"
-            android:onClick="applyLanguage"/>
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/langSwitchBtn"
@@ -28,14 +25,12 @@
             android:layout_weight="1"
             android:text="@string/ru_refresh" />
 
-        <Button
+        <Spinner
             android:id="@+id/langTargetBtn"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:text="@string/ru_choose_language"
-            android:onClick="applyLanguage"/>
+            android:layout_weight="1" />
+
     </LinearLayout>
 
     <EditText

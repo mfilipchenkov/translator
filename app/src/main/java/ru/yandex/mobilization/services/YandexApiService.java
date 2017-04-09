@@ -4,11 +4,18 @@ import android.content.Context;
 
 import com.android.volley.*;
 import com.android.volley.toolbox.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import ru.yandex.mobilization.R;
 import ru.yandex.mobilization.interfaces.IRequestCallback;
+import ru.yandex.mobilization.models.Language;
 import ru.yandex.mobilization.providers.HttpRequestProvider;
 
 // Сервис для работы с API Яндекса
@@ -27,13 +34,33 @@ public class YandexApiService {
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    callback.onSuccess(response);
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        JsonNode root = mapper.readTree(response);
+                        // В ответе ищем элемент langs, если его нет, кидаем исключение
+                        if(!root.has("langs")) {
+                            throw new Exception("Не найден элемент langs");
+                        }
+
+                        JsonNode langs = root.get("langs");
+
+                        LinkedHashMap<String, String> map = mapper.convertValue(langs, new TypeReference<LinkedHashMap<String, String>>(){});
+                        ArrayList<Language> languageList = new ArrayList<>();
+
+                        for(Map.Entry<String, String> entry: map.entrySet()) {
+                            languageList.add(new Language(entry.getKey(), entry.getValue()));
+                        }
+
+                        callback.onSuccess(languageList);
+                    } catch (Exception e) {
+                        callback.onError(e);
+                    }
                 }
             },
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    callback.onError(error);
                 }
             }
         );
