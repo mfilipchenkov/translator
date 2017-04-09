@@ -7,8 +7,11 @@ import com.android.volley.toolbox.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import java.io.IOException;
+import org.json.JSONArray;
+
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,17 +23,23 @@ import ru.yandex.mobilization.providers.HttpRequestProvider;
 
 // Сервис для работы с API Яндекса
 public class YandexApiService {
+    // Ключ для работы с API Яндекса
+    private String apiKey;
+    private Context context;
+
+    public YandexApiService(String apiKey, Context context) {
+        this.apiKey = apiKey;
+        this.context = context;
+    }
+
     // Метод для получения списков языков.
     // Принимает контекст приложения и метод обратного вызова для обработки результата
-    public void getLanguages(Context context, final IRequestCallback callback) {
-        String apiKey = context.getResources().getString(R.string.api_key);
-        final ArrayList<String> list = new ArrayList<>();
+    public void getLanguages(final IRequestCallback callback) {
+        HttpRequestProvider provider = HttpRequestProvider.getInstance(this.context.getApplicationContext());
 
-        HttpRequestProvider provider = HttpRequestProvider.getInstance(context.getApplicationContext());
+        String url = "https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=" + this.apiKey + "&ui=ru";
 
-        String url = "https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=" + apiKey + "&ui=ru";
-
-        StringRequest request = new StringRequest(Request.Method.GET, url,
+        StringRequest request = new StringRequest(Request.Method.POST, url,
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -66,5 +75,43 @@ public class YandexApiService {
         );
 
         provider.addToQueue(request);
+    }
+
+    public void translate(String from, String to, final String text, final IRequestCallback callback) {
+        try {
+            HttpRequestProvider provider = HttpRequestProvider.getInstance(this.context.getApplicationContext());
+            String url = "https://translate.yandex.net/api/v1.5/tr.json/translate" +
+                    "?key=" + this.apiKey +
+                    "&text=" + URLEncoder.encode(text, "UTF-8") +
+                    "&lang=" + (from.isEmpty() ? to : from + "-" + to) +
+                    "&format=plain";
+
+            StringRequest request = new StringRequest(Request.Method.POST, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                ObjectMapper mapper = new ObjectMapper();
+                                JsonNode node = mapper.readTree(response).get("text");
+                                ArrayList<String> list = mapper.readValue(node.toString(), new TypeReference<ArrayList<String>>() {});
+                                callback.onSuccess(list);
+                            } catch(Exception e) {
+
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            callback.onError(error);
+                        }
+                    }
+            );
+
+            provider.addToQueue(request);
+        }
+        catch(Exception e) {
+            callback.onError(e);
+        }
     }
 }
