@@ -1,13 +1,17 @@
 package ru.yandex.mobilization.activities;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -20,6 +24,14 @@ public class TranslatorActivity extends AppCompatActivity {
     private ArrayAdapter<String> listAdapter;
     private ArrayList<String> translationItems;
 
+    private Handler timeoutHandler = new Handler();
+    private Runnable onTypingTimeout = new Runnable() {
+        @Override
+        public void run() {
+            translate();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,28 +42,22 @@ public class TranslatorActivity extends AppCompatActivity {
 
         ListView translationListView = (ListView) this.findViewById(R.id.translation_listview);
         translationListView.setAdapter(this.listAdapter);
+
+        EditText sourceTextEditText = (EditText) this.findViewById(R.id.source_text_edittext);
+        sourceTextEditText.addTextChangedListener(getTextWatcherWithTimer());
+
         uploadLanguages();
     }
 
     public void onSwapButtonClick(View view) {
-        Language from = (Language) ((Spinner)this.findViewById(R.id.source_language_spinner)).getSelectedItem();
-        Language to = (Language) ((Spinner)this.findViewById(R.id.target_language_spinner)).getSelectedItem();
+        Spinner from = (Spinner)this.findViewById(R.id.source_language_spinner);
+        Spinner to = (Spinner)this.findViewById(R.id.target_language_spinner);
 
-        String text = ((EditText)this.findViewById(R.id.source_text_edittext)).getText().toString();
-        IRequestCallback callback = new IRequestCallback() {
-            @Override
-            public void onSuccess(Object result) {
-                translationItems.addAll((ArrayList<String>)result);
-                listAdapter.notifyDataSetChanged();
-            }
+        int tempValue = to.getSelectedItemPosition();
 
-            @Override
-            public void onError(Exception e) {
-
-            }
-        };
-
-        new YandexApiService(this.getResources().getString(R.string.api_key), this).translate(from.getCode(), to.getCode(), text, callback);
+        to.setSelection(from.getSelectedItemPosition());
+        from.setSelection(tempValue);
+        translate();
     }
 
     private void uploadLanguages() {
@@ -78,5 +84,43 @@ public class TranslatorActivity extends AppCompatActivity {
         };
 
         new YandexApiService(this.getResources().getString(R.string.api_key), currentContext).getLanguages(callback);
+    }
+
+    public TextWatcher getTextWatcherWithTimer() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                timeoutHandler.removeCallbacks(onTypingTimeout);
+                timeoutHandler.postDelayed(onTypingTimeout, 1000);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+    }
+
+    public void translate() {
+        Language from = (Language) ((Spinner)this.findViewById(R.id.source_language_spinner)).getSelectedItem();
+        Language to = (Language) ((Spinner)this.findViewById(R.id.target_language_spinner)).getSelectedItem();
+
+        String text = ((EditText)this.findViewById(R.id.source_text_edittext)).getText().toString();
+        IRequestCallback callback = new IRequestCallback() {
+            @Override
+            public void onSuccess(Object result) {
+                translationItems.clear();
+                translationItems.addAll((ArrayList<String>)result);
+                listAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        };
+
+        new YandexApiService(this.getResources().getString(R.string.api_key), this).translate(from.getCode(), to.getCode(), text, callback);
     }
 }

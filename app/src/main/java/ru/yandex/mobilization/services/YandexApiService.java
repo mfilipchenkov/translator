@@ -82,7 +82,7 @@ public class YandexApiService {
             HttpRequestProvider provider = HttpRequestProvider.getInstance(this.context.getApplicationContext());
             String url = "https://translate.yandex.net/api/v1.5/tr.json/translate" +
                     "?key=" + this.apiKey +
-                    "&text=" + URLEncoder.encode(text, "UTF-8") +
+                    "&text=" + URLEncoder.encode(text.isEmpty() ? " " : text, "UTF-8") +
                     "&lang=" + (from.isEmpty() ? to : from + "-" + to) +
                     "&format=plain";
 
