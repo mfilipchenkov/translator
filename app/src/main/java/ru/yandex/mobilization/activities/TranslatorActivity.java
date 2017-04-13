@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -21,11 +20,10 @@ import java.util.Arrays;
 import ru.yandex.mobilization.R;
 import ru.yandex.mobilization.interfaces.IRequestCallback;
 import ru.yandex.mobilization.models.Language;
-import ru.yandex.mobilization.services.InternetErrorsHelper;
 import ru.yandex.mobilization.services.YandexApiService;
 
 public class TranslatorActivity extends AppCompatActivity {
-    private ArrayAdapter<String> listAdapter;
+    private ArrayAdapter<String> translateListAdapter;
     private ArrayList<String> translationItems;
 
     private ArrayList<Language> languages;
@@ -38,7 +36,6 @@ public class TranslatorActivity extends AppCompatActivity {
             translate();
         }
     };
-    private Context activityContext = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +45,7 @@ public class TranslatorActivity extends AppCompatActivity {
         this.translationItems = new ArrayList<String>();
         this.languages = new ArrayList<Language>(Arrays.asList(new Language("", "Выберите язык")));
 
-        this.listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, this.translationItems);
+        this.translateListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, this.translationItems);
         this.spinnerAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, this.languages);
 
         Spinner srcLanguageSpinner = (Spinner) this.findViewById(R.id.source_language_spinner);
@@ -58,7 +55,7 @@ public class TranslatorActivity extends AppCompatActivity {
         targetLanguageSpinner.setAdapter(this.spinnerAdapter);
 
         ListView translationListView = (ListView) this.findViewById(R.id.translation_listview);
-        translationListView.setAdapter(this.listAdapter);
+        translationListView.setAdapter(this.translateListAdapter);
 
         EditText sourceTextEditText = (EditText) this.findViewById(R.id.source_text_edittext);
         sourceTextEditText.addTextChangedListener(getTextWatcherWithTimer());
@@ -91,7 +88,7 @@ public class TranslatorActivity extends AppCompatActivity {
 
             @Override
             public void onError(Exception e) {
-                Toast message = Toast.makeText(currentContext, InternetErrorsHelper.getExceptionDescription(e), Toast.LENGTH_LONG);
+                Toast message = Toast.makeText(currentContext, "Не удалось загрузить языки", Toast.LENGTH_LONG);
                 message.show();
             }
         };
@@ -107,6 +104,12 @@ public class TranslatorActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 timeoutHandler.removeCallbacks(onTypingTimeout);
+
+                if(s.length() == 0) {
+                    translateListAdapter.clear();
+                    translateListAdapter.notifyDataSetChanged();
+                    return;
+                }
                 timeoutHandler.postDelayed(onTypingTimeout, 1000);
             }
 
@@ -133,27 +136,24 @@ public class TranslatorActivity extends AppCompatActivity {
             IRequestCallback callback = new IRequestCallback() {
                 @Override
                 public void onSuccess(Object result) {
-                    listAdapter.clear();
-                    listAdapter.addAll((ArrayList<String>)result);
-                    listAdapter.notifyDataSetChanged();
+                    translateListAdapter.clear();
+                    translateListAdapter.addAll((ArrayList<String>)result);
+                    translateListAdapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    Toast message = Toast.makeText(currentContext, InternetErrorsHelper.getExceptionDescription(e), Toast.LENGTH_LONG);
-                    message.show();
+                    Toast.makeText(currentContext, "Во время перевода возникла ошибка", Toast.LENGTH_LONG).show();
                 }
             };
 
             new YandexApiService(this.getResources().getString(R.string.api_key), this).translate(from.getCode(), to.getCode(), text, callback);
         }
         catch (UnsupportedEncodingException e) {
-            Toast message = Toast.makeText(this, "Во время обработки текста возникла ошибка", Toast.LENGTH_LONG);
-            message.show();
+            Toast.makeText(this, "Во время обработки текста возникла ошибка", Toast.LENGTH_LONG).show();
         }
         catch (NullPointerException e) {
-            Toast message = Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG);
-            message.show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

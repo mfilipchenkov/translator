@@ -79,8 +79,7 @@ public class YandexApiService {
         String url = "https://translate.yandex.net/api/v1.5/tr.json/translate" +
                 "?key=" + this.apiKey +
                 "&text=" + URLEncoder.encode(text.isEmpty() ? " " : text, "UTF-8") +
-                "&lang=" + (from.isEmpty() ? "sfsfsf" : from + "-" + "sfsfsf") +
-                //"&lang=" + (from.isEmpty() ? to : from + "-" + to) +
+                "&lang=" + (from.isEmpty() ? to : from + "-" + to) +
                 "&format=plain";
 
         StringRequest request = new StringRequest(Request.Method.POST, url,
