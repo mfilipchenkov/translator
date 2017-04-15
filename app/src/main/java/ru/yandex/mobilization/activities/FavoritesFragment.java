@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 
 import ru.yandex.mobilization.R;
 
-public class HistoryFragment extends Fragment {
-    public HistoryFragment() {
+public class FavoritesFragment extends Fragment {
+    public FavoritesFragment() {
 
     }
 
-    public static HistoryFragment newInstance() {
-        HistoryFragment fragment = new HistoryFragment();
+    public static FavoritesFragment newInstance() {
+        FavoritesFragment fragment = new FavoritesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -29,8 +29,8 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_favorites, container, false);
     }
 
 }
