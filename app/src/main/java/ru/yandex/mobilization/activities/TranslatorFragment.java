@@ -21,11 +21,14 @@ import com.android.volley.NoConnectionError;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import ru.yandex.mobilization.R;
 import ru.yandex.mobilization.components.LanguageSpinner;
 import ru.yandex.mobilization.interfaces.IRequestCallback;
+import ru.yandex.mobilization.models.HistoryItem;
 import ru.yandex.mobilization.models.Language;
+import ru.yandex.mobilization.services.HistoryService;
 import ru.yandex.mobilization.services.YandexApiService;
 
 public class TranslatorFragment extends Fragment {
@@ -117,15 +120,15 @@ public class TranslatorFragment extends Fragment {
 
     public void translate() {
         try {
-            String text = ((EditText)this.view.findViewById(R.id.source_text_edittext)).getText().toString();
+            final String text = ((EditText)this.view.findViewById(R.id.source_text_edittext)).getText().toString();
 
             if(text == null || text.isEmpty()) {
                 return;
             }
 
             final Context currentContext = this.getActivity();
-            Language from = (Language) ((LanguageSpinner)this.view.findViewById(R.id.source_language_spinner)).getSelectedItem();
-            Language to = (Language) ((LanguageSpinner)this.view.findViewById(R.id.target_language_spinner)).getSelectedItem();
+            final Language from = (Language) ((LanguageSpinner)this.view.findViewById(R.id.source_language_spinner)).getSelectedItem();
+            final Language to = (Language) ((LanguageSpinner)this.view.findViewById(R.id.target_language_spinner)).getSelectedItem();
 
             if(from == null || from.getCode().isEmpty()) {
                 throw new NullPointerException("Не выбран исходный язык");
@@ -142,11 +145,21 @@ public class TranslatorFragment extends Fragment {
                     if(result instanceof ArrayList) {
                         ArrayList<String> resultArray = (ArrayList<String>) result;
                         resultArray.removeAll(Arrays.asList(null, "", " "));
+                        HistoryService historyService = new HistoryService(currentContext);
+
                         translateListAdapter.addAll(resultArray);
 
                         translateListAdapter.notifyDataSetChanged();
+
+                        for (String s: resultArray) {
+                            historyService.addToHistory(s, text, from, to, new Date());
+                        }
+
+                        ArrayList<HistoryItem> history = historyService.getHistory();
                     }
-                    Toast.makeText(currentContext, "Не удалось преобразовать ответ", Toast.LENGTH_LONG);
+                    else {
+                        Toast.makeText(currentContext, "Не удалось преобразовать ответ", Toast.LENGTH_LONG);
+                    }
                 }
 
                 @Override
