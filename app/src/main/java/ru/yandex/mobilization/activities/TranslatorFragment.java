@@ -14,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.NoConnectionError;
@@ -24,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ru.yandex.mobilization.R;
+import ru.yandex.mobilization.components.LanguageSpinner;
 import ru.yandex.mobilization.interfaces.IRequestCallback;
 import ru.yandex.mobilization.models.Language;
 import ru.yandex.mobilization.services.YandexApiService;
@@ -61,8 +61,8 @@ public class TranslatorFragment extends Fragment {
     }
 
     public void onSwapButtonClick(View view) {
-        Spinner from = (Spinner)this.getView().findViewById(R.id.source_language_spinner);
-        Spinner to = (Spinner)this.getView().findViewById(R.id.target_language_spinner);
+        LanguageSpinner from = (LanguageSpinner)this.getView().findViewById(R.id.source_language_spinner);
+        LanguageSpinner to = (LanguageSpinner)this.getView().findViewById(R.id.target_language_spinner);
 
         int tempValue = to.getSelectedItemPosition();
 
@@ -124,8 +124,8 @@ public class TranslatorFragment extends Fragment {
             }
 
             final Context currentContext = this.getActivity();
-            Language from = (Language) ((Spinner)this.view.findViewById(R.id.source_language_spinner)).getSelectedItem();
-            Language to = (Language) ((Spinner)this.view.findViewById(R.id.target_language_spinner)).getSelectedItem();
+            Language from = (Language) ((LanguageSpinner)this.view.findViewById(R.id.source_language_spinner)).getSelectedItem();
+            Language to = (Language) ((LanguageSpinner)this.view.findViewById(R.id.target_language_spinner)).getSelectedItem();
 
             if(from == null || from.getCode().isEmpty()) {
                 throw new NullPointerException("Не выбран исходный язык");
@@ -197,8 +197,8 @@ public class TranslatorFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         };
 
-        Spinner srcLanguageSpinner = (Spinner) this.view.findViewById(R.id.source_language_spinner);
-        Spinner targetLanguageSpinner = (Spinner) this.view.findViewById(R.id.target_language_spinner);
+        LanguageSpinner srcLanguageSpinner = (LanguageSpinner) this.view.findViewById(R.id.source_language_spinner);
+        LanguageSpinner targetLanguageSpinner = (LanguageSpinner) this.view.findViewById(R.id.target_language_spinner);
 
         srcLanguageSpinner.setOnItemSelectedListener(languageSelectedListener);
         targetLanguageSpinner.setOnItemSelectedListener(languageSelectedListener);
