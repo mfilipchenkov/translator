@@ -2,7 +2,6 @@ package ru.yandex.mobilization.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import ru.yandex.mobilization.activities.FavoritesFragment;

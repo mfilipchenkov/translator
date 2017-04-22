@@ -57,12 +57,9 @@ public class FavoritesFragment extends Fragment {
 
         ListView favoritesListView = (ListView) this.getActivity().findViewById(R.id.favorites_list_view);
         favoritesListView.setAdapter(favoritesListAdapter);
-
-        reloadFavorites();
     }
 
     public void reloadFavorites() {
-//        FavoritesService favoritesService = new FavoritesService(this.getActivity());
         ArrayList<FavoritesItem> historyItems = favoritesService.getFavorites();
 
         favoritesListAdapter.clear();

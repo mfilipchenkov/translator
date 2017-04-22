@@ -2,10 +2,6 @@ package ru.yandex.mobilization.models;
 
 import java.util.Date;
 
-/**
- * Created by Mike on 22.04.2017.
- */
-
 public class FavoritesItem {
 
     private String sourceText;
