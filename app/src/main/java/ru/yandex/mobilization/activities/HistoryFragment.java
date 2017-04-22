@@ -6,23 +6,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import ru.yandex.mobilization.R;
+import ru.yandex.mobilization.adapters.HistoryListAdapter;
 import ru.yandex.mobilization.models.HistoryItem;
 import ru.yandex.mobilization.services.HistoryService;
 
 public class HistoryFragment extends Fragment {
 
-    private ArrayAdapter<HistoryItem> historyListAdapter;
+    private HistoryListAdapter historyListAdapter;
     private ArrayList<HistoryItem> historyItems;
-
-    public HistoryFragment() {
-
-    }
+    private HistoryService historyService;
 
     public static HistoryFragment newInstance() {
         HistoryFragment fragment = new HistoryFragment();
@@ -33,40 +30,39 @@ public class HistoryFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        reloadHistory();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_history, container, false);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.historyItems = new ArrayList<>();
-        this.historyListAdapter = new ArrayAdapter<HistoryItem>(this.getActivity(), android.R.layout.simple_list_item_1, this.historyItems);
+        this.historyListAdapter = new HistoryListAdapter(this.getActivity(), R.id.history_list_view, this.historyItems);
+        this.historyService = new HistoryService(this.getActivity().getApplicationContext());
+    }
+
+    //TODO: исправить костыль, понять почему не обновляется таба при смене
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            reloadHistory();
+        }
     }
 
     @Override
     public void onStart() {
-        super.onStart();ListView historyListView = (ListView) this.getActivity().findViewById(R.id.history_list_view);
+        super.onStart();
+
+        ListView historyListView = (ListView) this.getActivity().findViewById(R.id.history_list_view);
         historyListView.setAdapter(historyListAdapter);
-
-        reloadHistory();
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_history, container, false);
     }
 
     public void reloadHistory() {
-        ListView historyListView = (ListView) this.getActivity().findViewById(R.id.history_list_view);
-        HistoryService historyService = new HistoryService(this.getActivity());
         ArrayList<HistoryItem> historyItems = historyService.getHistory();
 
         historyListAdapter.clear();
         historyListAdapter.addAll(historyItems);
-        historyListAdapter.notifyDataSetChanged();
     }
-
 }

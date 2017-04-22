@@ -50,7 +50,7 @@
             android:minLines="5" />
 
         <ListView
-            android:id="@+id/translation_listview"
+            android:id="@+id/translation_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">

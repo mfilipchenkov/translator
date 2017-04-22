@@ -7,10 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import ru.yandex.mobilization.models.HistoryItem;
-import ru.yandex.mobilization.models.Language;
+import ru.yandex.mobilization.models.TranslationItem;
 import ru.yandex.mobilization.providers.DbProvider;
 
 public class HistoryService {
@@ -34,17 +33,17 @@ public class HistoryService {
                 + "CURRENT_DATE integer" + ");";
     }
 
-    public void addToHistory(String text, String sourceText, Language from, Language to, Date date) {
+    public void addToHistory(TranslationItem item) {
         ContentValues data = new ContentValues();
-        String fromName = from.getName();
-        String toName = to.getName();
-        long lDate = date.getTime();
+        String fromName = item.getFrom().getName();
+        String toName = item.getTo().getName();
+        long lDate = item.getDate().getTime();
 
         SQLiteDatabase db = this.dbProvider.getWritableDatabase();
 
         try {
-            data.put("SOURCE_TEXT", sourceText);
-            data.put("TRANSLATED_TEXT", text);
+            data.put("SOURCE_TEXT", item.getSourceText());
+            data.put("TRANSLATED_TEXT", item.getText());
             data.put("LANG_FROM", fromName);
             data.put("LANG_TO", toName);
             data.put("CURRENT_DATE", lDate);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import ru.yandex.mobilization.services.FavoritesService;
 import ru.yandex.mobilization.services.HistoryService;
 
 public class DbProvider extends SQLiteOpenHelper {
@@ -16,6 +17,7 @@ public class DbProvider extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(HistoryService.getCreateTableQuery());
+        db.execSQL(FavoritesService.getCreateTableQuery());
     }
 
     @Override
