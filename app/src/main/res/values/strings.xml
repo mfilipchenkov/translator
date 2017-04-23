@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">Yandex.Mobilization</string>
-    <string name="ru_swap">Поменять</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ru_history">История</string>
+    <string name="ru_translation">Перевод</string>
+    <string name="ru_favorites">Избранное</string>
+    <string name="ru_choose_language">Выберите язык</string>
+    <string name="ru_fail_download_languages">Не удалось загрузить языки</string>
+    <string name="ru_fail_not_chosen_source_language">Не выбран исходный язык</string>
+    <string name="ru_fail_not_chosen_target_language">Не выбран целевой язык</string>
+    <string name="ru_fail_process_response">Не удалось преобразовать ответ</string>
+    <string name="ru_fail_connection_error">Нет подключения к сети</string>
+    <string name="ru_fail_translation_error">Во время перевода возникла ошибка</string>
+    <string name="ru_fail_process_text_error">Во время обработки текста возникла ошибка</string>
 </resources>

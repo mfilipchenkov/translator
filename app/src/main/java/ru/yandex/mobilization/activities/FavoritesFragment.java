@@ -44,19 +44,13 @@ public class FavoritesFragment extends Fragment {
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            reloadFavorites();
-        }
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
 
         ListView favoritesListView = (ListView) this.getActivity().findViewById(R.id.favorites_list_view);
         favoritesListView.setAdapter(favoritesListAdapter);
+
+        reloadFavorites();
     }
 
     public void reloadFavorites() {

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import ru.yandex.mobilization.services.FavoritesService;
 import ru.yandex.mobilization.services.HistoryService;
 
+// Провайдер для работы с БД
 public class DbProvider extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MOBILIZATION";
 

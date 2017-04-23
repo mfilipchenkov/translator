@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import ru.yandex.mobilization.R;
+import ru.yandex.mobilization.models.FavoritesItem;
 import ru.yandex.mobilization.models.HistoryItem;
 import ru.yandex.mobilization.services.FavoritesService;
 
@@ -56,10 +58,27 @@ public class HistoryListAdapter extends ArrayAdapter {
         ((TextView) view.findViewById(R.id.hi_sourceText)).setText(item.getSourceText());
         ((TextView) view.findViewById(R.id.hi_text)).setText(item.getText());
 
-        ((Button) view.findViewById(R.id.hi_addToFavorite)).setOnClickListener(new View.OnClickListener() {
+        final ImageButton favoritesBtn = (ImageButton) view.findViewById(R.id.hi_addToFavorite);
+        final FavoritesItem favoritesItem = favoritesService.get(item.getId());
+
+        if(favoritesItem != null) {
+            favoritesBtn.setImageResource(R.drawable.icon_favorite_active);
+        }
+        else {
+            favoritesBtn.setImageResource(R.drawable.icon_favorite);
+        }
+
+        favoritesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                favoritesService.addToFavorites(item);
+                if(favoritesItem == null) {
+                    favoritesService.addToFavorites(item);
+                    favoritesBtn.setImageResource(R.drawable.icon_favorite_active);
+                }
+                else {
+                    favoritesService.delete(favoritesItem);
+                    favoritesBtn.setImageResource(R.drawable.icon_favorite);
+                }
             }
         });
         return view;

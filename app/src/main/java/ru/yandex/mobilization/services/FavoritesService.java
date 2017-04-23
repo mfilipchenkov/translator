@@ -109,4 +109,38 @@ public class FavoritesService {
             db.close();
         }
     }
+
+    public FavoritesItem get(long id) {
+        SQLiteDatabase db = this.dbProvider.getWritableDatabase();
+        FavoritesItem item = null;
+        int idIndex, sourceIndex, textIndex, fromIndex, toIndex, dateIndex, historyIdIndex;
+        try {
+            String query = "select * from " + TABLE_NAME + " where HISTORY_ID=" + id + ";";
+            Cursor c = db.rawQuery(query, null);
+            if (c.moveToFirst()) {
+                idIndex = c.getColumnIndex("ID");
+                sourceIndex = c.getColumnIndex("SOURCE_TEXT");
+                textIndex = c.getColumnIndex("TRANSLATED_TEXT");
+                fromIndex = c.getColumnIndex("LANG_FROM");
+                toIndex = c.getColumnIndex("LANG_TO");
+                dateIndex = c.getColumnIndex("CURRENT_DATE");
+                historyIdIndex = c.getColumnIndex("HISTORY_ID");
+
+                item = new FavoritesItem(
+                        c.getInt(idIndex),
+                        c.getString(textIndex),
+                        c.getString(sourceIndex),
+                        c.getString(fromIndex),
+                        c.getString(toIndex),
+                        c.getLong(dateIndex),
+                        c.getInt(historyIdIndex)
+                );
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, "Не удалось получить Избранное", Toast.LENGTH_LONG).show();
+        } finally {
+            db.close();
+            return item;
+        }
+    }
 }

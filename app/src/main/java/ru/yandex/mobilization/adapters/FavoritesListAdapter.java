@@ -56,7 +56,7 @@ public class FavoritesListAdapter extends ArrayAdapter {
         ((TextView) view.findViewById(R.id.f_text)).setText(item.getText());
 
         ImageButton removeBtn = (ImageButton) view.findViewById(R.id.f_remove);
-        removeBtn.setBackgroundResource(R.drawable.icon_cross);
+        removeBtn.setImageResource(R.drawable.icon_trash);
 
         removeBtn.setOnClickListener(new View.OnClickListener() {
             @Override

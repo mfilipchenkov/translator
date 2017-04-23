@@ -2,6 +2,7 @@ package ru.yandex.mobilization.models;
 
 import java.util.Date;
 
+// Класс для хранения модели строк Избранного
 public class FavoritesItem {
 
     private String sourceText;

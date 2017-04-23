@@ -2,6 +2,7 @@ package ru.yandex.mobilization.models;
 
 import java.util.Date;
 
+// Класс для хранения модели перевода
 public class TranslationItem {
     private String sourceText;
     private String text;

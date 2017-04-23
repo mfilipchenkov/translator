@@ -1,6 +1,7 @@
 package ru.yandex.mobilization.activities;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -11,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -76,11 +77,12 @@ public class TranslatorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.fragment_translator, container, false);
+        Resources resources = this.getResources();
 
         this.setApiService(new YandexApiService(getResources().getString(R.string.api_key), getContext()));
 
         this.translationItems = new ArrayList<TranslationItem>();
-        this.languages = new ArrayList<Language>(Arrays.asList(new Language("", "Выберите язык")));
+        this.languages = new ArrayList<Language>(Arrays.asList(new Language("", resources.getString(R.string.ru_choose_language))));
 
         this.translationListAdapter = new TranslationListAdapter(this.getActivity(), R.id.translation_list_view, this.translationItems);
         this.spinnerAdapter = new ArrayAdapter(this.getActivity(), android.R.layout.simple_spinner_item, this.languages);
@@ -116,7 +118,7 @@ public class TranslatorFragment extends Fragment {
         EditText sourceTextEditText = (EditText) this.view.findViewById(R.id.source_text_edittext);
         sourceTextEditText.addTextChangedListener(getTextWatcherWithTimer());
 
-        Button swapLanguageButton = (Button) this.view.findViewById(R.id.swap_language_btn);
+        ImageButton swapLanguageButton = (ImageButton) this.view.findViewById(R.id.swap_language_btn);
         swapLanguageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +151,7 @@ public class TranslatorFragment extends Fragment {
     }
 
     private void uploadLanguages() {
+        final Resources resources = this.getResources();
         final Context currentContext = this.getActivity();
 
         // Подгрузим языки
@@ -161,7 +164,7 @@ public class TranslatorFragment extends Fragment {
 
             @Override
             public void onError(Exception e) {
-                Toast message = Toast.makeText(currentContext, "Не удалось загрузить языки", Toast.LENGTH_LONG);
+                Toast message = Toast.makeText(currentContext, resources.getString(R.string.ru_fail_download_languages), Toast.LENGTH_LONG);
                 message.show();
             }
         };
@@ -170,6 +173,7 @@ public class TranslatorFragment extends Fragment {
     }
 
     private void translate() {
+        final Resources resources = this.getResources();
         try {
             final String text = ((EditText)this.view.findViewById(R.id.source_text_edittext)).getText().toString();
 
@@ -182,11 +186,11 @@ public class TranslatorFragment extends Fragment {
             final Language to = (Language) ((LanguageSpinner)this.view.findViewById(R.id.target_language_spinner)).getSelectedItem();
 
             if(from == null || from.getCode().isEmpty()) {
-                throw new NullPointerException("Не выбран исходный язык");
+                throw new NullPointerException(resources.getString(R.string.ru_fail_not_chosen_source_language));
             }
 
             if(to == null || to.getCode().isEmpty()) {
-                throw new NullPointerException("Не выбран целевой язык");
+                throw new NullPointerException(resources.getString(R.string.ru_fail_not_chosen_target_language));
             }
 
             IRequestCallback callback = new IRequestCallback() {
@@ -204,17 +208,17 @@ public class TranslatorFragment extends Fragment {
                         }
                     }
                     else {
-                        Toast.makeText(currentContext, "Не удалось преобразовать ответ", Toast.LENGTH_LONG);
+                        Toast.makeText(currentContext, resources.getString(R.string.ru_fail_process_response), Toast.LENGTH_LONG);
                     }
                 }
 
                 @Override
                 public void onError(Exception e) {
                     if(e instanceof NoConnectionError) {
-                        Toast.makeText(currentContext, "Нет подключения к сети", Toast.LENGTH_LONG).show();
+                        Toast.makeText(currentContext, resources.getString(R.string.ru_fail_connection_error), Toast.LENGTH_LONG).show();
                     }
                     else {
-                        Toast.makeText(currentContext, "Во время перевода возникла ошибка", Toast.LENGTH_LONG).show();
+                        Toast.makeText(currentContext, resources.getString(R.string.ru_fail_translation_error), Toast.LENGTH_LONG).show();
                     }
                 }
             };
@@ -222,7 +226,7 @@ public class TranslatorFragment extends Fragment {
             apiService.translate(from.getCode(), to.getCode(), text, callback);
         }
         catch (UnsupportedEncodingException e) {
-            Toast.makeText(this.getActivity(), "Во время обработки текста возникла ошибка", Toast.LENGTH_LONG).show();
+            Toast.makeText(this.getActivity(), resources.getString(R.string.ru_fail_process_text_error), Toast.LENGTH_LONG).show();
         }
         catch (NullPointerException e) {
             Toast.makeText(this.getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();

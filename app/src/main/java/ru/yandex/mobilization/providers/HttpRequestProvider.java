@@ -5,6 +5,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+// Провайдер, предоставляющий функционал для работы с HTTP - запросами
 public class HttpRequestProvider {
     private static HttpRequestProvider instance;
     private RequestQueue queue;

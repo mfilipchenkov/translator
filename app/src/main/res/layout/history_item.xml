@@ -35,12 +35,12 @@
 
     </LinearLayout>
 
-    <Button
+    <ImageButton
         android:id="@+id/hi_addToFavorite"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="Button" />
+        android:padding="20dp"
+        android:background="@android:color/transparent" />
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package ru.yandex.mobilization.models;
 
+// Класс для хранения модели языков
 public class Language {
     private String code;
     private String name;

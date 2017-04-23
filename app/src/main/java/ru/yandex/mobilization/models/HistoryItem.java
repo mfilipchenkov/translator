@@ -2,6 +2,7 @@ package ru.yandex.mobilization.models;
 
 import java.util.Date;
 
+// Класс для хранения модели строк Истории
 public class HistoryItem {
     private String sourceText;
     private int id;

@@ -42,21 +42,14 @@ public class HistoryFragment extends Fragment {
         this.historyService = new HistoryService(this.getActivity().getApplicationContext());
     }
 
-    //TODO: исправить костыль, понять почему не обновляется таба при смене
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            reloadHistory();
-        }
-    }
-
     @Override
     public void onStart() {
         super.onStart();
 
         ListView historyListView = (ListView) this.getActivity().findViewById(R.id.history_list_view);
         historyListView.setAdapter(historyListAdapter);
+
+        reloadHistory();
     }
 
     public void reloadHistory() {

@@ -54,8 +54,8 @@ public class StartActivity extends AppCompatActivity {
                     }
                 });
 
-        actionBar.addTab(actionBar.newTab().setText("История").setTabListener(tabListener));
-        actionBar.addTab(actionBar.newTab().setText("Перевод").setTabListener(tabListener), true);
-        actionBar.addTab(actionBar.newTab().setText("Избранное").setTabListener(tabListener));
+        actionBar.addTab(actionBar.newTab().setText(R.string.ru_history).setTabListener(tabListener));
+        actionBar.addTab(actionBar.newTab().setText(R.string.ru_translation).setTabListener(tabListener), true);
+        actionBar.addTab(actionBar.newTab().setText(R.string.ru_favorites).setTabListener(tabListener));
     }
 }

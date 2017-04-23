@@ -36,42 +36,53 @@ public class YandexApiService {
 
         String url = "https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=" + this.apiKey + "&ui=ru";
 
-        StringRequest request = new StringRequest(Request.Method.POST, url,
-            new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    ObjectMapper mapper = new ObjectMapper();
-                    try {
-                        JsonNode root = mapper.readTree(response);
-                        // В ответе ищем элемент langs, если его нет, кидаем исключение
-                        if(!root.has("langs")) {
-                            throw new Exception("Не найден элемент langs");
-                        }
+        String cache = getCacheData(provider, url);
 
-                        JsonNode langs = root.get("langs");
-
-                        LinkedHashMap<String, String> map = mapper.convertValue(langs, new TypeReference<LinkedHashMap<String, String>>(){});
-                        ArrayList<Language> languageList = new ArrayList<>();
-
-                        for(Map.Entry<String, String> entry: map.entrySet()) {
-                            languageList.add(new Language(entry.getKey(), entry.getValue()));
-                        }
-
-                        callback.onSuccess(languageList);
-                    } catch (Exception e) {
-                        callback.onError(e);
+        if(cache == null || cache.isEmpty()) {
+            StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        processLanguage(response, callback);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
                     }
                 }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    callback.onError(error);
-                }
-            }
-        );
+            );
 
-        provider.addToQueue(request);
+            provider.addToQueue(request);
+        }
+        else {
+            processLanguage(cache, callback);
+        }
+    }
+
+    private void processLanguage(String response, IRequestCallback callback) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode root = mapper.readTree(response);
+            // В ответе ищем элемент langs, если его нет, кидаем исключение
+            if(!root.has("langs")) {
+                throw new Exception("Не найден элемент langs");
+            }
+
+            JsonNode langs = root.get("langs");
+
+            LinkedHashMap<String, String> map = mapper.convertValue(langs, new TypeReference<LinkedHashMap<String, String>>(){});
+            ArrayList<Language> languageList = new ArrayList<>();
+
+            for(Map.Entry<String, String> entry: map.entrySet()) {
+                languageList.add(new Language(entry.getKey(), entry.getValue()));
+            }
+
+            callback.onSuccess(languageList);
+        } catch (Exception e) {
+            callback.onError(e);
+        }
     }
 
     public void translate(String from, String to, final String text, final IRequestCallback callback) throws UnsupportedEncodingException {
@@ -82,28 +93,57 @@ public class YandexApiService {
                 "&lang=" + (from.isEmpty() ? to : from + "-" + to) +
                 "&format=plain";
 
-        StringRequest request = new StringRequest(Request.Method.POST, url,
-            new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        JsonNode node = mapper.readTree(response).get("text");
-                        ArrayList<String> list = mapper.readValue(node.toString(), new TypeReference<ArrayList<String>>() {});
-                        callback.onSuccess(list);
-                    } catch(Exception e) {
-                        callback.onError(e);
-                    }
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    callback.onError(error);
-                }
+        try {
+            // Ограничение на длину GET-запроса
+            if (url.length() >= 10000) {
+                throw new Exception("Превышена максимально допустимая длина текста");
             }
-        );
 
-        provider.addToQueue(request);
+            String cache = getCacheData(provider, url);
+
+            if(cache == null || cache.isEmpty()) {
+                StringRequest request = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            processTranslate(response, callback);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            callback.onError(error);
+                        }
+                    }
+                );
+
+                provider.addToQueue(request);
+            }
+            else {
+                processTranslate(cache, callback);
+            }
+        }
+        catch(Exception e) {
+            callback.onError(e);
+        }
+    }
+
+    private void processTranslate(String response, IRequestCallback callback) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(response).get("text");
+            ArrayList<String> list = mapper.readValue(node.toString(), new TypeReference<ArrayList<String>>() {});
+            callback.onSuccess(list);
+        } catch(Exception e) {
+            callback.onError(e);
+        }
+    }
+
+    private String getCacheData(HttpRequestProvider provider, String url) {
+        Cache.Entry entry = provider.getRequestQueue().getCache().get(url);
+        if(entry != null) {
+            return new String(entry.data);
+        }
+        return null;
     }
 }
