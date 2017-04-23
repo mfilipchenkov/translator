@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:id="@+id/history_item"
+    android:id="@+id/layout_history_item"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <LinearLayout
-        android:id="@+id/hi_textLayout"
+        android:id="@+id/layout_hi_textLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/hi_direction"
+            android:id="@+id/tv_hi_direction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
+            android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/hi_sourceText"
+            android:id="@+id/tv_hi_sourceText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
+            android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/hi_text"
+            android:id="@+id/tv_hi_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
+            android:layout_weight="1" />
 
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/hi_addToFavorite"
+        android:id="@+id/ib_hi_addToFavorite"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="1"

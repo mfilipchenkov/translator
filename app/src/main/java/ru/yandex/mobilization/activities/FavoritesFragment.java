@@ -33,7 +33,7 @@ public class FavoritesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         this.favoritesItems = new ArrayList<>();
-        this.favoritesListAdapter = new FavoritesListAdapter(this.getActivity(), R.id.favorites_list_view, this.favoritesItems);
+        this.favoritesListAdapter = new FavoritesListAdapter(this.getActivity(), R.id.lv_favorites_list_view, this.favoritesItems);
 
         this.favoritesService = new FavoritesService(this.getActivity().getApplicationContext());
     }
@@ -47,7 +47,7 @@ public class FavoritesFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        ListView favoritesListView = (ListView) this.getActivity().findViewById(R.id.favorites_list_view);
+        ListView favoritesListView = (ListView) this.getActivity().findViewById(R.id.lv_favorites_list_view);
         favoritesListView.setAdapter(favoritesListAdapter);
 
         reloadFavorites();

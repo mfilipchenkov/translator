@@ -12,13 +12,13 @@
         android:orientation="horizontal">
 
         <ru.yandex.mobilization.components.LanguageSpinner
-            android:id="@+id/source_language_spinner"
+            android:id="@+id/ls_source_language_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/swap_language_btn"
+            android:id="@+id/ib_swap_language_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -27,7 +27,7 @@
             app:srcCompat="@drawable/icon_swap" />
 
         <ru.yandex.mobilization.components.LanguageSpinner
-            android:id="@+id/target_language_spinner"
+            android:id="@+id/ls_target_language_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -40,7 +40,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/source_text_edittext"
+            android:id="@+id/et_source_text_edittext"
             style="@style/Widget.AppCompat.EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             android:minLines="5" />
 
         <ListView
-            android:id="@+id/translation_list_view"
+            android:id="@+id/lv_translation_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">

@@ -38,7 +38,7 @@ public class HistoryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.historyItems = new ArrayList<>();
-        this.historyListAdapter = new HistoryListAdapter(this.getActivity(), R.id.history_list_view, this.historyItems);
+        this.historyListAdapter = new HistoryListAdapter(this.getActivity(), R.id.lv_history_list_view, this.historyItems);
         this.historyService = new HistoryService(this.getActivity().getApplicationContext());
     }
 
@@ -46,7 +46,7 @@ public class HistoryFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        ListView historyListView = (ListView) this.getActivity().findViewById(R.id.history_list_view);
+        ListView historyListView = (ListView) this.getActivity().findViewById(R.id.lv_history_list_view);
         historyListView.setAdapter(historyListAdapter);
 
         reloadHistory();

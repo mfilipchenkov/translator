@@ -11,4 +11,6 @@
     <string name="ru_fail_connection_error">Нет подключения к сети</string>
     <string name="ru_fail_translation_error">Во время перевода возникла ошибка</string>
     <string name="ru_fail_process_text_error">Во время обработки текста возникла ошибка</string>
+    <string name="ru_fail_element_not_found">Не найден элемент</string>
+    <string name="ru_fail_exceed_length">Превышена максимально допустимая длина текста</string>
 </resources>

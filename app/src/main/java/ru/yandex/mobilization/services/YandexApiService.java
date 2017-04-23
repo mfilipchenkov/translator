@@ -1,6 +1,7 @@
 package ru.yandex.mobilization.services;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import com.android.volley.*;
 import com.android.volley.toolbox.*;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import ru.yandex.mobilization.R;
 import ru.yandex.mobilization.interfaces.IRequestCallback;
 import ru.yandex.mobilization.models.Language;
 import ru.yandex.mobilization.providers.HttpRequestProvider;
@@ -23,10 +25,12 @@ public class YandexApiService {
     // Ключ для работы с API Яндекса
     private String apiKey;
     private Context context;
+    private Resources resources;
 
     public YandexApiService(String apiKey, Context context) {
         this.apiKey = apiKey;
         this.context = context;
+        this.resources = context.getResources();
     }
 
     // Метод для получения списков языков.
@@ -67,7 +71,7 @@ public class YandexApiService {
             JsonNode root = mapper.readTree(response);
             // В ответе ищем элемент langs, если его нет, кидаем исключение
             if(!root.has("langs")) {
-                throw new Exception("Не найден элемент langs");
+                throw new Exception(resources.getString(R.string.ru_fail_element_not_found).concat(": langs"));
             }
 
             JsonNode langs = root.get("langs");
@@ -96,7 +100,7 @@ public class YandexApiService {
         try {
             // Ограничение на длину GET-запроса
             if (url.length() >= 10000) {
-                throw new Exception("Превышена максимально допустимая длина текста");
+                throw new Exception(resources.getString(R.string.ru_fail_exceed_length));
             }
 
             String cache = getCacheData(provider, url);

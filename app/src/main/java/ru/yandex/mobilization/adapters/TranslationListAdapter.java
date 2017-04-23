@@ -33,7 +33,7 @@ public class TranslationListAdapter extends ArrayAdapter {
         }
 
         TranslationItem item = (TranslationItem) getItem(position);
-        ((TextView) view.findViewById(R.id.t_translation)).setText((position + 1) + ". " + item.getText());
+        ((TextView) view.findViewById(R.id.tv_t_translation)).setText((position + 1) + ". " + item.getText());
         historyService.addToHistory(item);
         return view;
     }

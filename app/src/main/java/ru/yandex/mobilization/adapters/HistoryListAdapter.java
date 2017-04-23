@@ -54,11 +54,11 @@ public class HistoryListAdapter extends ArrayAdapter {
         }
 
         final HistoryItem item = (HistoryItem) getItem(position);
-        ((TextView) view.findViewById(R.id.hi_direction)).setText(item.getFrom() + "-" + item.getTo());
-        ((TextView) view.findViewById(R.id.hi_sourceText)).setText(item.getSourceText());
-        ((TextView) view.findViewById(R.id.hi_text)).setText(item.getText());
+        ((TextView) view.findViewById(R.id.tv_hi_direction)).setText(item.getFrom() + "-" + item.getTo());
+        ((TextView) view.findViewById(R.id.tv_hi_sourceText)).setText(item.getSourceText());
+        ((TextView) view.findViewById(R.id.tv_hi_text)).setText(item.getText());
 
-        final ImageButton favoritesBtn = (ImageButton) view.findViewById(R.id.hi_addToFavorite);
+        final ImageButton favoritesBtn = (ImageButton) view.findViewById(R.id.ib_hi_addToFavorite);
         final FavoritesItem favoritesItem = favoritesService.get(item.getId());
 
         if(favoritesItem != null) {

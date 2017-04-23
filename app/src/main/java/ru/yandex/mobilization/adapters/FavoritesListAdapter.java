@@ -51,11 +51,11 @@ public class FavoritesListAdapter extends ArrayAdapter {
         }
 
         final FavoritesItem item = (FavoritesItem) getItem(position);
-        ((TextView) view.findViewById(R.id.f_direction)).setText(item.getFrom() + "-" + item.getTo());
-        ((TextView) view.findViewById(R.id.f_sourceText)).setText(item.getSourceText());
-        ((TextView) view.findViewById(R.id.f_text)).setText(item.getText());
+        ((TextView) view.findViewById(R.id.tv_f_direction)).setText(item.getFrom() + "-" + item.getTo());
+        ((TextView) view.findViewById(R.id.tv_f_sourceText)).setText(item.getSourceText());
+        ((TextView) view.findViewById(R.id.tv_f_text)).setText(item.getText());
 
-        ImageButton removeBtn = (ImageButton) view.findViewById(R.id.f_remove);
+        ImageButton removeBtn = (ImageButton) view.findViewById(R.id.ib_f_remove);
         removeBtn.setImageResource(R.drawable.icon_trash);
 
         removeBtn.setOnClickListener(new View.OnClickListener() {

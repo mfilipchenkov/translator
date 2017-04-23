@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -64,8 +65,8 @@ public class TranslatorFragment extends Fragment {
     }
 
     public void onSwapButtonClick(View view) {
-        LanguageSpinner from = (LanguageSpinner)this.getView().findViewById(R.id.source_language_spinner);
-        LanguageSpinner to = (LanguageSpinner)this.getView().findViewById(R.id.target_language_spinner);
+        LanguageSpinner from = (LanguageSpinner)this.getView().findViewById(R.id.ls_source_language_spinner);
+        LanguageSpinner to = (LanguageSpinner)this.getView().findViewById(R.id.ls_target_language_spinner);
 
         int tempValue = to.getSelectedItemPosition();
 
@@ -84,7 +85,7 @@ public class TranslatorFragment extends Fragment {
         this.translationItems = new ArrayList<TranslationItem>();
         this.languages = new ArrayList<Language>(Arrays.asList(new Language("", resources.getString(R.string.ru_choose_language))));
 
-        this.translationListAdapter = new TranslationListAdapter(this.getActivity(), R.id.translation_list_view, this.translationItems);
+        this.translationListAdapter = new TranslationListAdapter(this.getActivity(), R.id.lv_translation_list_view, this.translationItems);
         this.spinnerAdapter = new ArrayAdapter(this.getActivity(), android.R.layout.simple_spinner_item, this.languages);
 
         AdapterView.OnItemSelectedListener languageSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -103,8 +104,8 @@ public class TranslatorFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         };
 
-        LanguageSpinner srcLanguageSpinner = (LanguageSpinner) this.view.findViewById(R.id.source_language_spinner);
-        LanguageSpinner targetLanguageSpinner = (LanguageSpinner) this.view.findViewById(R.id.target_language_spinner);
+        LanguageSpinner srcLanguageSpinner = (LanguageSpinner) this.view.findViewById(R.id.ls_source_language_spinner);
+        LanguageSpinner targetLanguageSpinner = (LanguageSpinner) this.view.findViewById(R.id.ls_target_language_spinner);
 
         srcLanguageSpinner.setOnItemSelectedListener(languageSelectedListener);
         targetLanguageSpinner.setOnItemSelectedListener(languageSelectedListener);
@@ -112,13 +113,13 @@ public class TranslatorFragment extends Fragment {
         srcLanguageSpinner.setAdapter(this.spinnerAdapter);
         targetLanguageSpinner.setAdapter(this.spinnerAdapter);
 
-        ListView translationListView = (ListView) this.view.findViewById(R.id.translation_list_view);
+        ListView translationListView = (ListView) this.view.findViewById(R.id.lv_translation_list_view);
         translationListView.setAdapter(this.translationListAdapter);
 
-        EditText sourceTextEditText = (EditText) this.view.findViewById(R.id.source_text_edittext);
+        EditText sourceTextEditText = (EditText) this.view.findViewById(R.id.et_source_text_edittext);
         sourceTextEditText.addTextChangedListener(getTextWatcherWithTimer());
 
-        ImageButton swapLanguageButton = (ImageButton) this.view.findViewById(R.id.swap_language_btn);
+        ImageButton swapLanguageButton = (ImageButton) this.view.findViewById(R.id.ib_swap_language_btn);
         swapLanguageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,7 +143,7 @@ public class TranslatorFragment extends Fragment {
                     translationListAdapter.clear();
                     return;
                 }
-                timeoutHandler.postDelayed(onTypingTimeout, 1000);
+                timeoutHandler.postDelayed(onTypingTimeout, 1500);
             }
 
             @Override
@@ -152,14 +153,29 @@ public class TranslatorFragment extends Fragment {
 
     private void uploadLanguages() {
         final Resources resources = this.getResources();
-        final Context currentContext = this.getActivity();
+        final FragmentActivity currentContext = this.getActivity();
 
         // Подгрузим языки
         IRequestCallback callback = new IRequestCallback() {
             @Override
             public void onSuccess(Object result) {
+                ArrayList<Language> resultArray = (ArrayList<Language>) result;
                 spinnerAdapter.clear();
-                spinnerAdapter.addAll((ArrayList<Language>) result);
+                spinnerAdapter.addAll(resultArray);
+
+                LanguageSpinner srcLanguageSpinner = (LanguageSpinner) currentContext.findViewById(R.id.ls_source_language_spinner);
+                LanguageSpinner targetLanguageSpinner = (LanguageSpinner) currentContext.findViewById(R.id.ls_target_language_spinner);
+
+                int ru = 0;
+                int en = 0;
+
+                for(int i = 0; i < resultArray.size(); i++) {
+                    if(resultArray.get(i).getCode().equals("ru")) ru = i;
+                    if(resultArray.get(i).getCode().equals("en")) en = i;
+                }
+
+                srcLanguageSpinner.setSelection(ru);
+                targetLanguageSpinner.setSelection(en);
             }
 
             @Override
@@ -175,15 +191,15 @@ public class TranslatorFragment extends Fragment {
     private void translate() {
         final Resources resources = this.getResources();
         try {
-            final String text = ((EditText)this.view.findViewById(R.id.source_text_edittext)).getText().toString();
+            final String text = ((EditText)this.view.findViewById(R.id.et_source_text_edittext)).getText().toString();
 
             if(text == null || text.isEmpty()) {
                 return;
             }
 
             final Context currentContext = this.getActivity();
-            final Language from = (Language) ((LanguageSpinner)this.view.findViewById(R.id.source_language_spinner)).getSelectedItem();
-            final Language to = (Language) ((LanguageSpinner)this.view.findViewById(R.id.target_language_spinner)).getSelectedItem();
+            final Language from = (Language) ((LanguageSpinner)this.view.findViewById(R.id.ls_source_language_spinner)).getSelectedItem();
+            final Language to = (Language) ((LanguageSpinner)this.view.findViewById(R.id.ls_target_language_spinner)).getSelectedItem();
 
             if(from == null || from.getCode().isEmpty()) {
                 throw new NullPointerException(resources.getString(R.string.ru_fail_not_chosen_source_language));
